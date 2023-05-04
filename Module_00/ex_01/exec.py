@@ -7,7 +7,7 @@ def reverse_string(all_args):
     Args:
         all_args (list): list of arguments passed to the command line
     """
-    # Delete empty args, then join with whitespace separator
+    # Join into string all non-empty args with whitespace separator
     args = " ".join([arg for arg in all_args if arg])
     # Reverse string, swap the case then delete leading and ending spaces
     result = args[::-1].strip().swapcase()

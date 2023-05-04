@@ -4,12 +4,20 @@ from Module_00.ex_01.exec import reverse_string
 
 class Test(unittest.TestCase):
     test_cases = [
+        # One empty arg
         ([""], ""),
+        # One normal arg
         (["Hello"], "OLLEh"),
+        # One harder arg
         (["L337 5P3AK!"], "!ka3p5 733l"),
+        # Multiple args
         (['L337', '5P3AK!'], "!ka3p5 733l"),
+        # Multiple args with one empty
         (['L337', '', '5P3AK!'], "!ka3p5 733l"),
-        (['', '', ''], "")
+        # Multiple empty args
+        (['', '', ''], ""),
+        # Multi args filled with spaces
+        ([' ', '   ', '     '], "")
     ]
 
     test_functions = [
