@@ -4,11 +4,12 @@
 
 This project is a Python programming and Machine Learning bootcamp created by [42 AI](http://www.42ai.fr).
 
-## Download
+You can find the [full project here](https://github.com/42-AI/bootcamp_python)
+And the [corrections here](https://github.com/42-AI/Python-Bootcamp-Corrections)
+The pdf files of each module can be downloaded from the [release page](https://github.com/42-AI/bootcamp_python/releases)
 
-The pdf files of each module can be downloaded from our realease page:
-[https://github.com/42-AI/bootcamp_python/releases](https://github.com/42-AI/bootcamp_python/releases)
-
+## Usage
+All testing done with Pytest.
 ## Curriculum
 
 ### Module00 - Basics 1 - Eleven Commandments
