@@ -5,7 +5,9 @@
 This project is a Python programming and Machine Learning bootcamp created by [42 AI](http://www.42ai.fr).
 
 You can find the [full project here](https://github.com/42-AI/bootcamp_python)
+
 And the [corrections here](https://github.com/42-AI/Python-Bootcamp-Corrections)
+
 The pdf files of each module can be downloaded from the [release page](https://github.com/42-AI/bootcamp_python/releases)
 
 ## Usage
