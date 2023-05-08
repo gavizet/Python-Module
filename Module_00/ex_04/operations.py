@@ -24,14 +24,12 @@ def operations(*args) -> None:
     try:
         a = int(args[0])
         b = int(args[1])
-        div_zero = "ERROR (division by 0)"
-        mod_zero = "ERROR (modulo by 0)"
         message = (
             f"Sum:\t\t{a + b}\n"
             f"Difference:\t{a - b}\n"
             f"Produit:\t{a * b}\n"
-            f"Quotient:\t{a / b if b != 0 else div_zero}\n"
-            f"Modulo:\t\t{a % b if b != 0 else mod_zero}"
+            f"Quotient:\t{a / b if b != 0 else 'ERROR (division by 0)'}\n"
+            f"Modulo:\t\t{a % b if b != 0 else 'ERROR (modulo by 0)'}"
         )
         print(message)
     except ValueError:
