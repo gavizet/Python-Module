@@ -3,6 +3,11 @@ import re
 
 
 def regex(text):
+    """Simple regex function that prints our count result
+
+    Args:
+        text (str): Valid argument passed to text_analyzer
+    """
     length = len(text)
     upper = len(re.findall(r'[A-Z]', text))
     lower = len(re.findall(r'[a-z]', text))
@@ -17,7 +22,13 @@ def regex(text):
 
 
 def text_analyzer(*args) -> None:
+    """Takes a list of arguments as parameter. If the argument is valid (1 string arg), parses it and prints
+    the number of lower, upper, punct and space characters that the text contains.
+    """
+    #print(*args)
+    #print(args)
     args_num = len(args)
+    #print(args_num)
     if args_num == 0:
         text = str(input("What is the text to analyze ?\n"))
         return(regex(text))
@@ -27,8 +38,6 @@ def text_analyzer(*args) -> None:
     elif not isinstance(args[0], str):
         print("AssertionError: argument is not a string")
         return
-        # TODO: Handle not a string
-        # TODO: handle text referenced before assignment
     text = args[0]
     regex(text)
 

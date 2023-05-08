@@ -1,4 +1,3 @@
-from unittest import result
 import pytest
 from Module_00.ex_02.whois import odd_or_even
 
