@@ -25,10 +25,7 @@ def text_analyzer(*args) -> None:
     """Takes a list of arguments as parameter. If the argument is valid (1 string arg), parses it and prints
     the number of lower, upper, punct and space characters that the text contains.
     """
-    #print(*args)
-    #print(args)
     args_num = len(args)
-    #print(args_num)
     if args_num == 0:
         text = str(input("What is the text to analyze ?\n"))
         return(regex(text))
