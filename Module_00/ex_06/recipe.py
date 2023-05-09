@@ -54,7 +54,6 @@ def print_recipe():
         )
     else:
         print("Recipe does not exist, try again.\n")
-        print_cookbook()
         return
 
 def print_cookbook():
