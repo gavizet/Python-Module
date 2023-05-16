@@ -1,6 +1,4 @@
 """Simple tests with print and asserts for Module_01/ex_01/game.py"""
-#import sys
-#sys.path.append('Module_01/ex_01')
 from Module_01.ex_01.game import Stark
 
 # To test, go into project root folder and use :
