@@ -1,8 +1,12 @@
+""""Book class for our program"""
 from datetime import datetime
 from Module_01.ex_00.recipe import Recipe
 
 
 class Book:
+    """The Book class represents a recipe book and provides methods to add, retrieve,
+    and filter recipes.
+    """
 
     def __init__(self, name="Recipe Cookbook"):
         try:
@@ -32,9 +36,8 @@ class Book:
         Args:
             recipe_type (str): the type of recipe we want to filter on
         """
-        if recipe_type not in self.recipes_list.keys():
-            raise AssertionError(
-                f"Recipe type needs to be one of {', '.join(self.recipes_list)}")
+        if recipe_type not in self.recipes_list:
+            return f"Recipe type needs to be one of {', '.join(self.recipes_list)}"
         all_desired_meals = []
         for meal_type_list in self.recipes_list[recipe_type]:
             all_desired_meals.append(meal_type_list.name)
@@ -47,6 +50,6 @@ class Book:
             recipe (class object): the Recipe object we want to add
         """
         if not isinstance(recipe, Recipe):
-            raise AssertionError("That's not a Recipe object")
+            return "That's not a Recipe object"
         self.last_update = datetime.now()
         self.recipes_list[recipe.recipe_type].append(recipe)

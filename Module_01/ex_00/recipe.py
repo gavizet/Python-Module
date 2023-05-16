@@ -1,3 +1,4 @@
+""""Simple recipe class for our program"""
 import sys
 
 
