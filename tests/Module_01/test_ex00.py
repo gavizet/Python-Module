@@ -1,6 +1,6 @@
-from Module_01.ex_00.book import Book
-from Module_01.ex_00.recipe import Recipe
+""""Some pytest parametrized tests to see if the error management for Recipe is properly handled"""
 import pytest
+from Module_01.ex_00.recipe import Recipe
 
 PARAMS_RECIPE = [
     # No ingredient
@@ -29,6 +29,8 @@ PARAMS_RECIPE = [
 
 @pytest.mark.parametrize("args, expected", PARAMS_RECIPE)
 def test_recipe_init(args, expected):
+    """Test the error managemnt from the Recipe __init__ method.
+    """
     if isinstance(expected, type) and issubclass(expected, Exception):
         with pytest.raises(expected):
             recipe = Recipe(*args)
@@ -41,23 +43,3 @@ def test_recipe_init(args, expected):
         assert recipe.ingredients == ingredients
         assert recipe.description == description
         assert recipe.recipe_type == meal_type
-
-
-PARAMS_BOOK = [
-    ()
-]
-
-
-@pytest.mark.parametrize("args, expected", PARAMS_BOOK)
-def test_book_add_recipe(args, expected):
-    pass
-
-
-@pytest.mark.parametrize("args, expected", PARAMS_BOOK)
-def test_book_get_recipe_by_name(args, expected):
-    pass
-
-
-@pytest.mark.parametrize("args, expected", PARAMS_BOOK)
-def test_book_get_recipe_by_type(args, expexted):
-    pass
