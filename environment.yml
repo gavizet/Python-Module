@@ -1,0 +1,11 @@
+name: Python-ML-Bootcamp
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip=23.1.2
+  - pytest=7.3.1
+  - numpy
+  - pandas
+  - jupyter
+  - pycodestyle
