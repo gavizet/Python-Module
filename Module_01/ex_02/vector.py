@@ -113,7 +113,7 @@ class Vector:
             raise ValueError("Can only sub with 2 Vectors of the same shape")
         # Have to zip the list of list and then the lists themselves so we're able to
         # loop concurrently in self and other
-        result = [[self_num + other_num for self_num, other_num in zip(self_lst, other_lst)]
+        result = [[self_num - other_num for self_num, other_num in zip(self_lst, other_lst)]
                   for self_lst, other_lst in zip(self.values, other.values)]
         return Vector(result)
 
