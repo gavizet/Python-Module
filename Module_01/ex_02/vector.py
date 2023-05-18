@@ -72,9 +72,16 @@ class Vector:
                 * Tuple of 2 ints (range) where a < b - Vector((6, 12))")
         self.values = values
 
-    def dot_product(self):
+    def dot_product(self, other):
         """Produces a dot product between two Vectors of the same shape"""
-        return "dot product method called"
+        if not isinstance(other, Vector) or self.shape != other.shape:
+            raise ValueError(
+                "Can only do the dot product with 2 Vectors of the same shape")
+        result = 0
+        for lst in range(self.shape[0]):
+            for num in range(self.shape[1]):
+                result += self.values[lst][num] * other.values[lst][num]
+        return result
 
     def transpose(self):
         """Returns the transpose vector (i.e. a column vector into a row vector, or a row vector
