@@ -1,7 +1,6 @@
 """
 Ïntroduction to vectors and built-in methods, particularly ones allowing to perform operations
 """
-from copy import deepcopy
 
 
 class Vector:
@@ -44,7 +43,7 @@ class Vector:
 
     @staticmethod
     def is_tuple_vector(tpl: tuple) -> bool:
-        """"Returns True if it's a Tuple of 2 int where a > b"""
+        """"Returns True if it's a Tuple of 2 int where a < b"""
         # Vector((10, 16))
         if isinstance(tpl, tuple) and len(tpl) == 2 and tpl[0] <= tpl[1]\
                 and isinstance(tpl[0], int) and isinstance(tpl[1], int):
@@ -80,8 +79,15 @@ class Vector:
     def transpose(self):
         """Returns the transpose vector (i.e. a column vector into a row vector, or a row vector
         into a column vector)."""
-
-        return "Transpose vector method called"
+        result = []
+        if self.shape[0] <= 1:  # Row vector (one list of multiple floats)
+            # Go through each nested list. Add each item of the sublist into a list of their own.
+            result = [[item] for sublist in self.values for item in sublist]
+        else:  # Column vector (multiple lists of a single float)
+            # Go through each nested list. Add each item into one big list.
+            result = [[item for sublist in self.values for item in sublist]]
+        print(f"Result: {result}")
+        return Vector(result)
 
     def __add__(self, other):
         if not isinstance(other, Vector) or self.shape != other.shape:
