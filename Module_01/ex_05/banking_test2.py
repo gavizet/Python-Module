@@ -1,7 +1,5 @@
 from the_bank import Account, Bank
 
-# This should print Failed, then Success
-
 if __name__ == "__main__":
     bank = Bank()
     bank.add(Account(
