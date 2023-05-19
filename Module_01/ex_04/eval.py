@@ -41,12 +41,13 @@ class Evaluator:
 if __name__ == "__main__":
     def test_evaluate(coefs, words):
         """Test function"""
-        print(f"Test for {coefs}/{words}:")
-        print(Evaluator.enumerate_evaluate(coefs, words))
-        print(Evaluator.zip_evaluate(coefs, words))
+        print(f"Testing with: {coefs}/{words}:")
+        print(f"Zip: {Evaluator.zip_evaluate(coefs, words)}")
+        print(f"Enum: {Evaluator.enumerate_evaluate(coefs, words)}")
         print()
 
     test_evaluate([1.0, 2.0, 1.0, 4.0, 0.5], [
                   "Le", "Lorem", "Ipsum", "est", "simple"])
     test_evaluate([0.0, -1.0, 1.0, -12.0, 0.0, 42.42],
                   ["Le", "Lorem", "Ipsum", "n'", "est", "pas", "simple"])
+    test_evaluate(None, None)
