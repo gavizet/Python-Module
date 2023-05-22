@@ -9,11 +9,12 @@ def ft_map(function_to_apply, iterable):
     Return:
         An iterable. None if the iterable can not be used by the function.
     """
-    try:
-        for elem in iterable:
-            yield function_to_apply(elem)
-    except TypeError as exception:
-        print(str(exception))
+    if not callable(function_to_apply):
+        raise TypeError("1st argument should be callable")
+    if not hasattr(iterable, '__iter__'):
+        raise TypeError("2nd argument should be an iterable")
+    for elem in iterable:
+        yield function_to_apply(elem)
 
 
 if __name__ == "__main__":
