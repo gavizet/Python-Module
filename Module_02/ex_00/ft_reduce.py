@@ -9,3 +9,27 @@ def ft_reduce(function_to_apply, iterable):
     Return:
         An iterable. None if the iterable can not be used by the function.
     """
+    try:
+        if len(iterable) == 0:
+            raise IndexError("Can't iterate, no range on iterable")
+        result = iterable[0]
+        for elem in iterable[1:]:
+            result = function_to_apply(result, elem)
+        return result
+    except (TypeError, IndexError) as exception:
+        print(str(exception))
+
+
+if __name__ == "__main__":
+    lst = ['H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd']
+    x = [1, 2, 3, 4]
+    # Expected: "Hello world"
+    print(ft_reduce(lambda u, v: u + v, lst))
+    # Expected: 24
+    print(ft_reduce(lambda u, v: u * v, x))
+    # Expected: 1
+    print(ft_reduce(lambda u, v: u + v, [1]))
+    # Expected: 1
+    print(ft_reduce(lambda u, v: u + v, []))
+    # Expected: Error
+    print(ft_reduce(function_to_apply=None, iterable=lst))
