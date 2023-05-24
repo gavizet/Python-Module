@@ -35,11 +35,10 @@ class CsvReader:
             raise FileNotFoundError(f"'{self.filename}' not found.")
         self.file = open(self.filename, 'r', encoding='utf-8')
         logging.debug("File opened")
-        elem_count = None
-        for line in self.file:
+        for index, line in enumerate(self.file):
             line = self.parse_line(line)
             # Elem_count initialized based on 1st line (header)
-            if elem_count is None:
+            if index == 0:
                 elem_count = len(line)
             # If ant future line doesn't have the same number of elements,
             # then csv file is corrupted
