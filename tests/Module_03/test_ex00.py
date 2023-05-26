@@ -1,6 +1,7 @@
 import pytest
 from Module_03.ex_00.NumPyCreator import NumPyCreator
 import numpy as np
+import numpy.testing as npt
 
 npc = NumPyCreator()
 
@@ -15,17 +16,5 @@ FAIL_PARAMS = [
 
 
 @pytest.mark.parametrize("params, expected", FAIL_PARAMS)
-def test_error_num_py_creator(params, expected):
+def test_error_arrays(params, expected):
     assert params == expected
-
-
-VALID_PARAMS = [
-    (npc.from_list([[], []]), "array([], shape=(2, 0), dtype=float64)"),
-    (npc.from_list([[1, 2, 3], [6, 3, 4], [8, 5, 6]]),
-     "array([[1, 2, 3], [6, 3, 4], [8, 5, 6]])"),
-]
-
-
-@pytest.mark.parametrize("params, expected", VALID_PARAMS)
-def test_valid_num_py_creator(params, expected):
-    pass
