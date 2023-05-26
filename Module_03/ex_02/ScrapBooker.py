@@ -3,6 +3,7 @@ import numpy as np
 
 
 class ScrapBooker:
+    """Some numpy array manipulation"""
 
     def __init__(self):
         pass
@@ -34,7 +35,8 @@ class ScrapBooker:
         return True
 
     def crop(self, array, dim, position=(0, 0)):
-        """ Crops the image as a rectangle via dim arguments (being the new height and width of the image) from the coordinates given by position arguments.
+        """ Crops the image as a rectangle via dim arguments (being the new height and width of
+        the image) from the coordinates given by position arguments.
 
         Args:
             array: numpy.ndarray
@@ -93,13 +95,27 @@ class ScrapBooker:
             return None
         if not isinstance(n, int) or n < 0:
             return None
-        array_copy = np.copy(array)
-        for index in range(n - 1):
-            array = np.concatenate((array, array_copy), axis=axis)
-        return array
+        # See wether we go copy along the row or columns depending on axis
+        repetitions = (n, 1) if axis == 0 else (1, n)
+        # Can also do it with np.copy into np.concatenate
+        return np.tile(array, repetitions)
 
     def mosaic(self, array, dim):
-        return True
+        """ Makes a grid with multiple copies of the array.
+
+        Args:
+            array: numpy.ndarray.
+            dim: tuple of 2 integers. number of repetition along each dimensions
+
+        Return:
+            new_arr: mosaic numpy.ndarray.
+            None (combinaison of parameters not compatible).
+        """
+        if not self._is_ndarray(array) or not self._is_valid_dim(dim):
+            return None
+        # new_array = self.juxtapose(array, dim[0], 0)
+        # new_array = self.juxtapose(array, dim[1], 1)
+        return np.tile(array, dim)
 
 
 if __name__ == "__main__":
@@ -134,13 +150,23 @@ if __name__ == "__main__":
     print("------------------------------")
 
     print("Expect: array([[1, 2, 3],\n\
-      [4, 5, 6],\n\
-      [7, 8, 9],\n\
-      [1, 2, 3],\n\
-      [4, 5, 6],\n\
-      [7, 8, 9]])")
+        [4, 5, 6],\n\
+        [7, 8, 9],\n\
+        [1, 2, 3],\n\
+        [4, 5, 6],\n\
+        [7, 8, 9]])")
     juxtapose = spb.juxtapose(arr4, 2, 0)
     print(f"Result: {repr(juxtapose)}")
+    print("------------------------------")
+
+    print("Expect: array([[1, 2, 3, 1, 2, 3],\n\
+        [4, 5, 6, 4, 5, 6],\n\
+        [7, 8, 9, 7, 8, 9],\n\
+        [1, 2, 3, 1, 2, 3],\n\
+        [4, 5, 6, 4, 5, 6],\n\
+        [7, 8, 9, 7, 8, 9]])")
+    mosaic = spb.mosaic(arr4, (2, 2))
+    print(f"Result: {repr(mosaic)}")
     print("------------------------------")
 
     """ ERROR TESTS, SHOULD ALL RETURN NONE """
@@ -153,5 +179,5 @@ if __name__ == "__main__":
     # Negative n
     assert spb.juxtapose(arr4, -2, 0) is None
     # More than 2 int for dimension
-    # assert spb.mosaic(arr4, (1, 2, 3)) is None
+    assert spb.mosaic(arr4, (1, 2, 3)) is None
     print("Error tests passed")
