@@ -70,10 +70,24 @@ class ScrapBooker:
         """
         if not self._is_ndarray(array) or not self._is_valid_n_axis(array, n, axis):
             return None
+        # Swap axis so we delete from the right axis
+        axis = 0 if axis == 1 else 1
+        # Stock all row/column index to delete
         n_to_delete = list(range(n-1, array.shape[axis], n))
         return np.delete(array, n_to_delete, axis)
 
     def juxtapose(self, array, n, axis):
+        """ Juxtaposes n copies of the image along the specified axis.
+        Args:
+            array: numpy.ndarray.
+            n: positive non null integer.
+            axis: integer of value 0 or 1.
+        Return:
+            new_arr: juxtaposed numpy.ndarray.
+            None (combinaison of parameters not compatible).
+        """
+        if not self._is_ndarray(array) or not self._is_valid_n_axis(array, n, axis):
+            return None
         return True
 
     def mosaic(self, array, dim):
@@ -83,9 +97,29 @@ class ScrapBooker:
 if __name__ == "__main__":
     spb = ScrapBooker()
     arr1 = np.arange(0, 25).reshape(5, 5)
-    print(repr(arr1))
-    print(repr(spb.crop(arr1, (2, 3), (3, 2))))
-
     arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1, 9)
-    print(repr(arr2))
-    print(repr(spb.thin(arr2, 3, 1)))
+    arr3 = np.array([[var] * 10 for var in "ABCDEFG"])
+
+    print("Expect: array([[ 5],\n[10],\n[15]])")
+    crop = spb.crop(arr1, (3, 1), (1, 0))
+    print(f"Result: {repr(crop)}")
+    print("------------------------------")
+
+    print("Expect: array([['A', 'B', 'D', 'E', 'G', 'H'],\n\
+      ['A', 'B', 'D', 'E', 'G', 'H'],\n\
+      ['A', 'B', 'D', 'E', 'G', 'H'],\n\
+      ['A', 'B', 'D', 'E', 'G', 'H'],\n\
+      ['A', 'B', 'D', 'E', 'G', 'H'],\n\
+      ['A', 'B', 'D', 'E', 'G', 'H']], dtype='<U1')")
+    thin1 = spb.thin(arr2, 3, 0)
+    print(f"Result: {repr(thin1)}")
+    print("------------------------------")
+
+    print("Expect: array([['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],\n\
+      ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],\n\
+      ['D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D'],\n\
+      ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'],\n\
+      ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G']], dtype='<U1')")
+    thin2 = spb.thin(arr3, 3, 1)
+    print(f"Result: {repr(thin2)}")
+    print("------------------------------")
