@@ -1,4 +1,4 @@
-""" Basic manipulation of images via matplotlib library """
+""" Basic manipulation of images via matplotlib library"""
 import numpy as np
 import matplotlib.pyplot as mp_plt
 import matplotlib.image as mp_img
