@@ -4,6 +4,9 @@ import numpy as np
 
 class ScrapBooker:
 
+    def __init__(self):
+        pass
+
     @staticmethod
     def _is_ndarray(array) -> bool:
         if not isinstance(array, np.ndarray):
@@ -86,9 +89,14 @@ class ScrapBooker:
             new_arr: juxtaposed numpy.ndarray.
             None (combinaison of parameters not compatible).
         """
-        if not self._is_ndarray(array) or not self._is_valid_n_axis(array, n, axis):
+        if not self._is_ndarray(array) or not self._is_valid_n_axis(array, 0, axis):
             return None
-        return True
+        if not isinstance(n, int) or n < 0:
+            return None
+        array_copy = np.copy(array)
+        for index in range(n - 1):
+            array = np.concatenate((array, array_copy), axis=axis)
+        return array
 
     def mosaic(self, array, dim):
         return True
@@ -99,6 +107,7 @@ if __name__ == "__main__":
     arr1 = np.arange(0, 25).reshape(5, 5)
     arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1, 9)
     arr3 = np.array([[var] * 10 for var in "ABCDEFG"])
+    arr4 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
     print("Expect: array([[ 5],\n[10],\n[15]])")
     crop = spb.crop(arr1, (3, 1), (1, 0))
@@ -123,3 +132,26 @@ if __name__ == "__main__":
     thin2 = spb.thin(arr3, 3, 1)
     print(f"Result: {repr(thin2)}")
     print("------------------------------")
+
+    print("Expect: array([[1, 2, 3],\n\
+      [4, 5, 6],\n\
+      [7, 8, 9],\n\
+      [1, 2, 3],\n\
+      [4, 5, 6],\n\
+      [7, 8, 9]])")
+    juxtapose = spb.juxtapose(arr4, 2, 0)
+    print(f"Result: {repr(juxtapose)}")
+    print("------------------------------")
+
+    """ ERROR TESTS, SHOULD ALL RETURN NONE """
+    # Not a numpy array
+    assert spb.crop([[1, 2, 3], [4, 5, 6], [7, 8, 9]], (1, 2)) is None
+    # Crop exceeding size of array
+    assert spb.crop(arr1, (3, 3), (8, 8)) is None
+    # Axis not 0 or 1
+    assert spb.thin(arr3, 3, 2) is None
+    # Negative n
+    assert spb.juxtapose(arr4, -2, 0) is None
+    # More than 2 int for dimension
+    # assert spb.mosaic(arr4, (1, 2, 3)) is None
+    print("Error tests passed")
