@@ -25,13 +25,11 @@ class NumPyCreator:
             if len_elem is None:
                 len_elem = len(elem)
             elif len_elem != len(elem):
-                print("test")
                 return False
             # Check type of nested
             if type_elem is None:
                 type_elem = type(elem)
             elif type_elem != type(elem):
-                print("test2")
                 return False
         return True
 
