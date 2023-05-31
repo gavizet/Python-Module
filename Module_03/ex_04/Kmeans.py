@@ -17,30 +17,42 @@ class VectorDistance:
         pass
 
     @staticmethod
-    def _euclidian_distance(vector1, vector2):
+    def euclidian_distance(vector1, vector2):
+        # Also called L2 distance because using Minkowski distance with p as 2
         # Could use numpy methods instead but meh, here to learn
-        euclidian_distance = sum(abs((float(v1_i) - float(v2_i))) ** 2
+        euclidian_distance = sum(abs(v1_i - v2_i) ** 2
                                  for v1_i, v2_i in zip(vector1, vector2)) ** 0.5
         return euclidian_distance
 
     @staticmethod
-    def _manhattan_distance(vector1, vector2):
+    def manhattan_distance(vector1, vector2):
+        # Also called L1 distance because using Minkowski distance with p as 1
         # Could use numpy methods instead but meh, here to learn
-        manhattan_distance = sum(abs((float(v1_i) - float(v2_i)))
+        manhattan_distance = sum(abs(v1_i - v2_i)
                                  for v1_i, v2_i in zip(vector1, vector2))
         return manhattan_distance
 
     @staticmethod
-    def _cosine_distance(vector1, vector2):
+    def cosine_distance(vector1, vector2):
         # Could use numpy methods instead but meh, here to learn
         dot, v1_magn, v2_magn = 0, 0, 0
         for v1_num, v2_num in zip(vector1, vector2):
-            dot += float(v1_num) * float(v2_num)
-            v1_magn += float(v1_num) ** 2
-            v2_magn += float(v2_num) ** 2
+            dot += v1_num * v2_num
+            v1_magn += v1_num ** 2
+            v2_magn += v2_num ** 2
         cosine_similarity = dot / ((v1_magn ** 0.5) * (v2_magn ** 0.5))
         # Cosine distance is the contrary of cosine similarity, i.e 1 - cosine_similarity
         return float(1 - cosine_similarity)
+
+    @staticmethod
+    def manhattan_normalize(vector):
+        norm = sum(vector)
+        return vector / norm
+
+    @staticmethod
+    def euclidian_normalize(vector):
+        norm = np.sqrt(sum(vector ** 2))
+        return vector / norm
 
 
 class KmeansClustering:
@@ -78,32 +90,66 @@ class KmeansClustering:
         """
         pass
 
+    def range_standardize_data(self, X):
+        # Get max value for weight, height and bone density columns
+        my_max = np.max(X, axis=0)[1:]
+        # Get min value for weight, height and bone density columns
+        my_min = np.min(X, axis=0)[1:]
+        # Doing range standardization => (X - Xmin) / (Xmax - Xmin) for each value
+        # Broadcasting to column at index 1, 2, 3 (ommitting 0, i.e index)
+        X[:, (1, 2, 3)] = (X[:, (1, 2, 3)] -
+                           my_min) / (my_max - my_min)
 
-if __name__ == "__main__":
+
+def parse_args():
+    """Parse command line arguments with argparse module
+
+    Raises:
+        ValueError: if ncentroid or max_iter arguments are < 1
+
+    Returns:
+        args: our argument object
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-filepath", default="Module_03/ex_04/solar_system_census.csv", type=str, required=True)
     parser.add_argument("-ncentroid", default=5, type=int, required=True)
     parser.add_argument("-max_iter", default=20, type=int, required=True)
-    args = parser.parse_args(sys.argv[1:])
-    if args.ncentroid < 1 or args.max_iter < 1:
-        print("Error : ncentroid and max_iter have to be positive")
+    arguments = parser.parse_args(sys.argv[1:])
+    if arguments.ncentroid < 1 or arguments.max_iter < 1:
+        raise ValueError("ncentroid and max_iter have to be positive")
+    return arguments
+
+
+if __name__ == "__main__":
+    args = parse_args()
     kmeans = KmeansClustering(ncentroid=args.ncentroid, max_iter=args.max_iter)
     npc = NumPyCreator()
     with CsvReader(args.filepath, header=True) as file:
         file_header = np.array(file.getheader())
-        file_data = npc.from_list(file.getdata())
-        # print(file_data[len(file_data) - 3:])
-        # print(file_header)
-    v1 = ['186', '186', '94', '0.52']
-    v2 = ['187', '193', '95', '0.71']
-    distance = VectorDistance()
-    euclidian = distance._euclidian_distance(v1[1:], v2[1:])
-    print(f"Euclidian: {euclidian}")
-    manhattan = distance._manhattan_distance(v1[1:], v2[1:])
-    print(f"Manhattan: {manhattan}")
-    cosine = distance._cosine_distance(v1[1:], v2[1:])
-    print(f"Cosine: {cosine}")
+        # Get all file data as list of floats
+        file_data = npc.from_list(file.getdata(), float)
+        kmeans.range_standardize_data(file_data)
+    # v1 = file_data[-2][1:]
+    # v2 = file_data[-1][1:]
+    # v3 = np.array([2.0, 0.0, 0.0])
+    # print(v1)
+    # print(v2)
+    # distance = VectorDistance()
+    # print("==== V1 & V2 ====")
+    # euclidian = distance.euclidian_distance(v1, v2)
+    # print(f"Euclidian: {euclidian}")
+    # manhattan = distance.manhattan_distance(v1, v2)
+    # print(f"Manhattan: {manhattan}")
+    # cosine = distance.cosine_distance(v1, v2)
+    # print(f"Cosine: {cosine*10}")
+    # print("==== V1 & V3 ====")
+    # euclidian = distance.euclidian_distance(v1, v3)
+    # print(f"Euclidian: {euclidian}")
+    # manhattan = distance.manhattan_distance(v1, v3)
+    # print(f"Manhattan: {manhattan}")
+    # cosine = distance.cosine_distance(v1, v3)
+    # print(f"Cosine: {cosine*10}")
 
 
 # Usage :
