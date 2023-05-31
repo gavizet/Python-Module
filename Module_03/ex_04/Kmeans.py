@@ -61,9 +61,41 @@ class KmeansClustering:
         self.ncentroid = ncentroid  # number of centroids
         self.max_iter = max_iter  # number of max iterations to update the centroids
         self.centroids = []  # values of the centroids
+        self.max_ = []
+        self.min_ = []
+        self.dist = VectorDistance()
 
-    def get_dist(self):
-        pass
+    def range_standardize_data(self, X):
+        # Delete the first column in X, in this case the index
+        X = X[:, 1:]
+        # Get max value for weight, height and bone density columns
+        self.max_ = np.max(X, axis=0)
+        # Get min value for weight, height and bone density columns
+        self.min_ = np.min(X, axis=0)
+        # Broadcasting range standardization to our data
+        X = (X - self.min_) / (self.max_ - self.min_)
+        return X
+
+    def initialize_centroids(self, X):
+        # Update max based on standardized data
+        self.max_ = np.max(X, axis=0)
+        # Update min based on standardized data
+        self.min_ = np.min(X, axis=0)
+        # Generate random centroids vectors with data between min and max
+        self.centroids = [np.random.uniform(self.min_, self.max_)
+                          for i in range(self.ncentroid)]
+
+    def find_closest_cluster(self, distance):
+        return np.argmin(distance, axis=1)
+
+    def should_stop(self, iterations, old_centroids):
+        if iterations > self.max_iter:
+            return True
+        return old_centroids == self.centroids
+
+    def label_data(self, data_set):
+        distance = np.zeros((data_set.shape[0], self.ncentroid))
+        print(distance.shape)
 
     def fit(self, X):
         """
@@ -76,7 +108,15 @@ class KmeansClustering:
         Return:
             None.
         """
-        pass
+        X = self.range_standardize_data(X)
+        self.initialize_centroids(X)
+        print(self.centroids)
+        iterations = 0
+        old_centroids = None
+        while not self.should_stop(iterations, old_centroids):
+            iterations += 1
+            old_centroids = self.centroids
+            self.label_data(X)
 
     def predict(self, X):
         """
@@ -89,16 +129,6 @@ class KmeansClustering:
             the prediction has a numpy.ndarray, a vector of dimension m * 1.
         """
         pass
-
-    def range_standardize_data(self, X):
-        # Get max value for weight, height and bone density columns
-        my_max = np.max(X, axis=0)[1:]
-        # Get min value for weight, height and bone density columns
-        my_min = np.min(X, axis=0)[1:]
-        # Doing range standardization => (X - Xmin) / (Xmax - Xmin) for each value
-        # Broadcasting to column at index 1, 2, 3 (ommitting 0, i.e index)
-        X[:, (1, 2, 3)] = (X[:, (1, 2, 3)] -
-                           my_min) / (my_max - my_min)
 
 
 def parse_args():
@@ -123,33 +153,14 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    kmeans = KmeansClustering(ncentroid=args.ncentroid, max_iter=args.max_iter)
-    npc = NumPyCreator()
     with CsvReader(args.filepath, header=True) as file:
         file_header = np.array(file.getheader())
         # Get all file data as list of floats
-        file_data = npc.from_list(file.getdata(), float)
-        kmeans.range_standardize_data(file_data)
-    # v1 = file_data[-2][1:]
-    # v2 = file_data[-1][1:]
-    # v3 = np.array([2.0, 0.0, 0.0])
-    # print(v1)
-    # print(v2)
-    # distance = VectorDistance()
-    # print("==== V1 & V2 ====")
-    # euclidian = distance.euclidian_distance(v1, v2)
-    # print(f"Euclidian: {euclidian}")
-    # manhattan = distance.manhattan_distance(v1, v2)
-    # print(f"Manhattan: {manhattan}")
-    # cosine = distance.cosine_distance(v1, v2)
-    # print(f"Cosine: {cosine*10}")
-    # print("==== V1 & V3 ====")
-    # euclidian = distance.euclidian_distance(v1, v3)
-    # print(f"Euclidian: {euclidian}")
-    # manhattan = distance.manhattan_distance(v1, v3)
-    # print(f"Manhattan: {manhattan}")
-    # cosine = distance.cosine_distance(v1, v3)
-    # print(f"Cosine: {cosine*10}")
+        file_data = NumPyCreator().from_list(file.getdata(), float)
+        kmeans = KmeansClustering(
+            ncentroid=args.ncentroid, max_iter=args.max_iter)
+        kmeans.fit(file_data)
+        kmeans.predict(file_data)
 
 
 # Usage :
