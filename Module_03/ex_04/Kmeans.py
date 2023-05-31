@@ -12,6 +12,37 @@ from Module_03.ex_00.NumPyCreator import NumPyCreator
 # K-means implementation : https://machinelearningmastery.com/tutorial-to-implement-k-nearest-neighbors-in-python-from-scratch/
 
 
+class VectorDistance:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def _euclidian_distance(vector1, vector2):
+        # Could use numpy methods instead but meh, here to learn
+        euclidian_distance = sum(abs((float(v1_i) - float(v2_i))) ** 2
+                                 for v1_i, v2_i in zip(vector1, vector2)) ** 0.5
+        return euclidian_distance
+
+    @staticmethod
+    def _manhattan_distance(vector1, vector2):
+        # Could use numpy methods instead but meh, here to learn
+        manhattan_distance = sum(abs((float(v1_i) - float(v2_i)))
+                                 for v1_i, v2_i in zip(vector1, vector2))
+        return manhattan_distance
+
+    @staticmethod
+    def _cosine_distance(vector1, vector2):
+        # Could use numpy methods instead but meh, here to learn
+        dot, v1_magn, v2_magn = 0, 0, 0
+        for v1_num, v2_num in zip(vector1, vector2):
+            dot += float(v1_num) * float(v2_num)
+            v1_magn += float(v1_num) ** 2
+            v2_magn += float(v2_num) ** 2
+        cosine_similarity = dot / ((v1_magn ** 0.5) * (v2_magn ** 0.5))
+        # Cosine distance is the contrary of cosine similarity, i.e 1 - cosine_similarity
+        return float(1 - cosine_similarity)
+
+
 class KmeansClustering:
 
     def __init__(self, max_iter=20, ncentroid=5):
@@ -51,7 +82,7 @@ class KmeansClustering:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-filepath", default="Module_03/ex_04/solar_system.csv", type=str, required=True)
+        "-filepath", default="Module_03/ex_04/solar_system_census.csv", type=str, required=True)
     parser.add_argument("-ncentroid", default=5, type=int, required=True)
     parser.add_argument("-max_iter", default=20, type=int, required=True)
     args = parser.parse_args(sys.argv[1:])
@@ -62,8 +93,17 @@ if __name__ == "__main__":
     with CsvReader(args.filepath, header=True) as file:
         file_header = np.array(file.getheader())
         file_data = npc.from_list(file.getdata())
-        print(file_data[len(file_data) - 3:])
-        print(file_header)
+        # print(file_data[len(file_data) - 3:])
+        # print(file_header)
+    v1 = ['186', '186', '94', '0.52']
+    v2 = ['187', '193', '95', '0.71']
+    distance = VectorDistance()
+    euclidian = distance._euclidian_distance(v1[1:], v2[1:])
+    print(f"Euclidian: {euclidian}")
+    manhattan = distance._manhattan_distance(v1[1:], v2[1:])
+    print(f"Manhattan: {manhattan}")
+    cosine = distance._cosine_distance(v1[1:], v2[1:])
+    print(f"Cosine: {cosine}")
 
 
 # Usage :
