@@ -82,20 +82,30 @@ class KmeansClustering:
         # Update min based on standardized data
         self.min_ = np.min(X, axis=0)
         # Generate random centroids vectors with data between min and max
-        self.centroids = [np.random.uniform(self.min_, self.max_)
-                          for i in range(self.ncentroid)]
-
-    def find_closest_cluster(self, distance):
-        return np.argmin(distance, axis=1)
+        self.centroids = np.array([np.random.uniform(self.min_, self.max_)
+                                   for i in range(self.ncentroid)])
 
     def should_stop(self, iterations, old_centroids):
         if iterations > self.max_iter:
             return True
-        return old_centroids == self.centroids
+        return np.array_equal(old_centroids, self.centroids)
 
-    def label_data(self, data_set):
+    def find_closest_cluster(self, distance):
+        return np.argmin(distance, axis=1)
+
+    def get_distances(self, data_set):
         distance = np.zeros((data_set.shape[0], self.ncentroid))
-        print(distance.shape)
+        for index, elem in enumerate(data_set):
+            for k in range(self.ncentroid):
+                distance[index, k] = self.dist.euclidian_distance(
+                    data_set[index], self.centroids[k])
+        print("=== DATA SET ===")
+        print(data_set)
+        print("=== CENTROIDS ===")
+        print(self.centroids)
+        print("=== DISTANCE ===")
+        print(distance)
+        return distance
 
     def fit(self, X):
         """
@@ -110,13 +120,14 @@ class KmeansClustering:
         """
         X = self.range_standardize_data(X)
         self.initialize_centroids(X)
-        print(self.centroids)
         iterations = 0
         old_centroids = None
         while not self.should_stop(iterations, old_centroids):
             iterations += 1
             old_centroids = self.centroids
-            self.label_data(X)
+            dists = self.get_distances(X)
+            labels = self.find_closest_cluster(dists)
+            print(labels)
 
     def predict(self, X):
         """
@@ -159,8 +170,8 @@ if __name__ == "__main__":
         file_data = NumPyCreator().from_list(file.getdata(), float)
         kmeans = KmeansClustering(
             ncentroid=args.ncentroid, max_iter=args.max_iter)
-        kmeans.fit(file_data)
-        kmeans.predict(file_data)
+        kmeans.fit(file_data[116:])
+        kmeans.predict(file_data[116:])
 
 
 # Usage :
