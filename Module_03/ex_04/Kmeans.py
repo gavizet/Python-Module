@@ -14,29 +14,31 @@ from Module_03.ex_00.NumPyCreator import NumPyCreator
 
 class KmeansClustering:
 
-    def __init__(self, max_iter=20, ncentroid=5):
+    def __init__(self, data, max_iter=20, ncentroid=5):
         self.ncentroid = ncentroid  # number of centroids
         self.max_iter = max_iter  # number of max iterations to update the centroids
         self.centroids = []  # values of the centroids
+        # Range standardize data so weight, height and bone_density have the same importance
+        self.data_set = self.range_standardize_data(data)
         self.max_ = []
         self.min_ = []
 
-    def range_standardize_data(self, data_set):
+    def range_standardize_data(self, data):
         # Delete the first column in X, in this case the index
-        data_set = data_set[:, 1:]
+        data = data[:, 1:]
         # Get max value for weight, height and bone density columns
-        self.max_ = np.max(data_set, axis=0)
+        self.max_ = np.max(data, axis=0)
         # Get min value for weight, height and bone density columns
-        self.min_ = np.min(data_set, axis=0)
+        self.min_ = np.min(data, axis=0)
         # Broadcasting range standardization to our data
-        data_set = (data_set - self.min_) / (self.max_ - self.min_)
-        return data_set
+        data = (data - self.min_) / (self.max_ - self.min_)
+        return data
 
-    def initialize_centroids(self, data_set):
+    def initialize_centroids(self):
         # Update max based on standardized data
-        self.max_ = np.max(data_set, axis=0)
+        self.max_ = np.max(self.data_set, axis=0)
         # Update min based on standardized data
-        self.min_ = np.min(data_set, axis=0)
+        self.min_ = np.min(self.data_set, axis=0)
         # Generate random centroids vectors with data between min and max
         self.centroids = np.array([np.random.uniform(self.min_, self.max_)
                                    for i in range(self.ncentroid)])
@@ -49,27 +51,27 @@ class KmeansClustering:
     def find_closest_cluster(self, distance):
         return np.argmin(distance, axis=1)
 
-    def manhattan_distance(self, data_set, centroid):
-        return np.sum(np.abs(data_set - centroid), axis=1)
+    def manhattan_distance(self, centroid):
+        return np.sum(np.abs(self.data_set - centroid), axis=1)
 
-    def euclidian_distance(self, data_set, centroid):
-        return np.linalg.norm(data_set - centroid, axis=1)
+    def euclidian_distance(self, centroid):
+        return np.linalg.norm(self.data_set - centroid, axis=1)
 
-    def compute_distances(self, data_set, centroids):
+    def get_distances(self, centroids):
         # Create 2D array of size : len_of_data_set x num_of_centroids
-        distance = np.zeros((data_set.shape[0], self.ncentroid))
+        distance = np.zeros((self.data_set.shape[0], self.ncentroid))
         for k in range(self.ncentroid):
             # Apply pythagore to all rows of data_set compared to centroid[k] and
             # store those values in distance's k column
-            distance[:, k] = self.euclidian_distance(data_set, centroids[k, :])
+            distance[:, k] = self.euclidian_distance(centroids[k, :])
         return distance
 
-    def compute_centroids(self, data_set, labels, old_centroids):
-        centroids = np.zeros((self.ncentroid, data_set.shape[1]))
+    def get_centroids(self, labels, old_centroids):
+        centroids = np.zeros((self.ncentroid, self.data_set.shape[1]))
         for k in range(self.ncentroid):
             # Make a 2D array containing all data points (1D array) that have
             # centroid[k] as their closest
-            new_labels = data_set[labels == k, :]
+            new_labels = self.data_set[labels == k, :]
             if new_labels.size > 0:
                 # If any data point has centroid[k] as their closest,
                 # update our centroid[k] value with he mean of all those data points
@@ -80,7 +82,7 @@ class KmeansClustering:
                 centroids[k] = old_centroids[k]
         return centroids
 
-    def fit(self, data_set):
+    def fit(self):
         """
         Run the K-means clustering algorithm.
         For the location of the initial centroids, random pick ncentroids from the dataset.
@@ -93,23 +95,21 @@ class KmeansClustering:
         """
         iterations = 0
         old_centroids = None
-        data_set = self.range_standardize_data(data_set)
-        self.initialize_centroids(data_set)
+        self.initialize_centroids()
         # Loop until we reach max_iter or centroids don't change anymore
         while not self.should_stop(iterations, old_centroids):
             iterations += 1
             old_centroids = self.centroids
             # Returns a 2D array of shape(number_of_data_point, number_of_centroids)
             # containing the distance of each data point compared to each centroid.
-            dists = self.compute_distances(data_set, self.centroids)
+            dists = self.get_distances(self.centroids)
             # Returns a 1D array containing the index at which the closest centroid can be found for each data point.
             # For example, labels[10] would contain an int representing the n-th centroid that is closest to the 10th data point.
             labels = self.find_closest_cluster(dists)
-            self.centroids = self.compute_centroids(
-                data_set, labels, old_centroids)
+            self.centroids = self.get_centroids(labels, old_centroids)
         print(f"Iterations: {iterations}")
 
-    def predict(self, data_set):
+    def predict(self):
         """
         Predict from wich cluster each datapoint belongs to.
 
@@ -120,34 +120,36 @@ class KmeansClustering:
             the prediction has a numpy.ndarray, a vector of dimension m * 1.
         """
         # Delete first column (index) and standardize data
-        data_set = self.range_standardize_data(data_set)
         # Returns 2D array containing the distance of each data point compared to each centroid.
-        dists = self.compute_distances(data_set, self.centroids)
+        dists = self.get_distances(self.centroids)
         # Returns a 1D array with each data point containg the number of the closest centroid
         labels = self.find_closest_cluster(dists)
         return labels
 
-    def display_plot(self, data_set, my_labels):
-        data_set = self.range_standardize_data(data_set)
-        fig = plt.figure()
+    def display_plot(self, my_labels):
+        fig = plt.figure(figsize=(8, 8))
         ax = plt.axes(projection='3d')
         cluster_labels = my_labels
-        cluster_centers = self.centroids
-        ax.set_xlabel("Height")
-        ax.set_ylabel("Weight")
-        ax.set_zlabel("Bone Density")
+        centroids = self.centroids
+        ax.set_xlabel("Height", fontweight='bold')
+        ax.set_ylabel("Weight", fontweight='bold')
+        ax.set_zlabel("Bone Density", fontweight='bold')
+        plt.title(
+            f"Kmeans with {self.ncentroid} centroids and {len(self.data_set)} data points", fontweight='bold')
         colorstr = ["red", "blue", "green", "purple"]
         for k in range(self.ncentroid):
-            mask = cluster_labels == k
-            center = cluster_centers[k]
+            mask = (cluster_labels == k)
             color = colorstr[k] if (k < len(colorstr)) else None
             print(
-                f"{sum(mask)} citizens for centroid[{k}] with coords: {center}")
-            ax.scatter(data_set[mask, 0], data_set[mask, 1],
-                       data_set[mask, 2], color=color)
-            ax.scatter(center[0], center[1], center[2], color=color,
-                       marker="o", s=200, label="centroids")
-        ax.legend
+                f"{sum(mask)} citizens for centroid[{k}] with coords: {centroids[k]}")
+            weight = self.data_set[mask, 0]
+            height = self.data_set[mask, 1]
+            bone_density = self.data_set[mask, 2]
+            ax.scatter(weight, height,
+                       bone_density, color=color)
+            ax.scatter(centroids[k][0], centroids[k][1], centroids[k][2],
+                       color=color, s=200, label="Centroids")
+
         plt.show()
 
 
@@ -177,11 +179,11 @@ if __name__ == "__main__":
         file_header = np.array(file.getheader())
         # Get all file data as list of floats
         file_data = NumPyCreator().from_list(file.getdata(), float)
-        kmeans = KmeansClustering(
-            ncentroid=args.ncentroid, max_iter=args.max_iter)
-        kmeans.fit(file_data)
-        all_labels = kmeans.predict(file_data)
-        kmeans.display_plot(file_data, all_labels)
+        kmeans = KmeansClustering(data=file_data, ncentroid=args.ncentroid,
+                                  max_iter=args.max_iter)
+        kmeans.fit()
+        all_labels = kmeans.predict()
+        kmeans.display_plot(all_labels)
 
 
 # Usage :
