@@ -24,14 +24,14 @@ class KmeansClustering:
         self.min_ = []
 
     def standardize_data(self, data_set):
-        """ Simple min-max standardization of our data"""
+        """ Apply min-max standardization to our data"""
         # Delete the first column in X, in this case the index
         data_set = data_set[:, 1:]
         # Get max value for weight, height and bone density columns
         self.max_ = np.max(data_set, axis=0)
         # Get min value for weight, height and bone density columns
         self.min_ = np.min(data_set, axis=0)
-        # Broadcasting range standardization to our data
+        # Broadcasting min-max standardization to our data
         data_set = (data_set - self.min_) / (self.max_ - self.min_)
         return data_set
 
@@ -75,7 +75,7 @@ class KmeansClustering:
         # Create 2D array of size : len_of_data_set x num_of_centroids
         distance = np.zeros((data_set.shape[0], self.ncentroid))
         for k in range(self.ncentroid):
-            # Apply pythagore normalization to all rows of data_set compared to centroid[k]
+            # Apply euclidian normalization to all rows of data_set compared to centroid[k]
             # and store those values in distance's k column
             distance[:, k] = self.euclidian_distance(data_set, centroids[k, :])
         return distance
@@ -137,6 +137,7 @@ class KmeansClustering:
             # For example, labels[10] would contain an int representing the n-th
             # centroid that is closest to the 10th data point.
             labels = self.find_closest_cluster(dists)
+            # Update our centroid array based on the labels
             self.centroids = self.get_centroids(data_set, labels,
                                                 old_centroids)
         print(f"Iterations: {iterations}")
@@ -190,7 +191,6 @@ class KmeansClustering:
                          bone_density, color=color)
             axes.scatter(centroids[k][0], centroids[k][1], centroids[k][2],
                          color=color, s=200, label="Centroids")
-
         plt.show()
 
 
