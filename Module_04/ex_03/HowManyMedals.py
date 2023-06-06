@@ -35,8 +35,8 @@ def how_many_medals(dataframe, name) -> dict:
         result[year] = {'G': 0, 'S': 0, 'B': 0}
         # Fill 'medal' key based on how many the candidate got for that specific year
         for medal in medals:
-            medal_mask = (dataframe['Year'] == year) & (
-                dataframe['Medal'] == medal)
+            medal_mask = (dataframe['Year'].values == year) & (
+                dataframe['Medal'].values == medal)
             result[year][medal[0]] = len(dataframe[medal_mask])
     return result
 
@@ -46,7 +46,8 @@ def test_function():
     data = loader.load("Module_04/ex_00/athlete_events.csv")
 
     def test_how_many_medals(name, expected):
-        print(f"Result: {how_many_medals(data, name)}")
+        result = how_many_medals(data, name)
+        print(f"Result: {result}")
         print(f"Expected: {expected}")
         print("----------------------")
 
@@ -55,6 +56,8 @@ def test_function():
     test_how_many_medals('Yekaterina Konstantinovna Abramova',
                          "{2006: {'G': 0, 'S': 0, 'B': 1}, 2010: {'G': 0, 'S': 0, 'B': 0}}")
     test_how_many_medals('Kristin Otto', "{1988: {'G': 6, 'S': 0, 'B': 0}}")
+    test_how_many_medals(
+        'Kjetil Andr Aamodt', "{1992: {'G': 1, 'S': 0, 'B': 1}, 1994: {'G': 0, 'S': 2, 'B': 1}, 1998: {'G': 0, 'S': 0, 'B': 0}, 2002: {'G': 2, 'S': 0, 'B': 0}, 2006: {'G': 1, 'S': 0, 'B': 0}}")
 
 
 if __name__ == "__main__":
