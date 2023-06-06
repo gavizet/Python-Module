@@ -2,7 +2,6 @@
 of dictionaries giving the number and type of medals for each year during which the
 participant won medals. """
 from Module_04.ex_00.FileLoader import Fileloader
-import pandas as pd
 
 
 # See this article about performance when iterating over panda Dataframes :
