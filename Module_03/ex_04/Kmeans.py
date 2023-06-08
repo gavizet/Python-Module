@@ -7,9 +7,15 @@ from Module_02.ex_03.csvreader import CsvReader
 from Module_03.ex_00.NumPyCreator import NumPyCreator
 
 # Distance metrics : https://medium.com/@kunal_gohrani/different-types-of-distance-metrics-used-in-machine-learning-e9928c5e26c7
+
 # K-means explanation : https://stanford.edu/~cpiech/cs221/handouts/kmeans.html
+
 # K-means plot scattering : https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a
+
+# Article about data-preprocessing : https://towardsdatascience.com/feature-engineering-for-machine-learning-3a5e293a5114#ad97
+
 # Interesting paper about K-means : https://ai.stanford.edu/~acoates/papers/coatesng_nntot2012.pdf
+
 # Another paper, with less depth : https://arxiv.org/ftp/arxiv/papers/1503/1503.00900.pdf
 
 
